@@ -1,0 +1,118 @@
+# server 配置
+server:
+  port: 8092
+  tomcat:
+    max-threads: 0
+    uri-encoding: utf-8
+
+# spring 配置
+spring:
+  jmx.enabled: false
+  http:
+    encoding:
+      force: true
+      charset: utf-8
+      enabled: true
+  datasource:
+    url: jdbc:postgresql://ls-bfc1b6c29516ee27932a03603b519c171866fd1a.c6ap3u3sr0zb.ap-southeast-2.rds.amazonaws.com:5432/td-freight_testing
+    username: dbmasteruser
+    password: 2#==7X)JT;,9m9uGq{6:&b|ek?Iv%L},
+    
+#    url: jdbc:postgresql://aafc2anrxq363p.czjadly3x7hj.ap-southeast-2.rds.amazonaws.com:5432/ebdb
+#    username: TDFreightProd
+#    password: cDJkdXSD#-5c)~=J,4
+#    url: jdbc:postgresql://localhost:5432/td-freight_testing
+#    username: postgres
+#    password: admin
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    # 如果启动的时候需要flyway管理sql脚本的话，将enabled设置为true
+    enabled: true
+    # 如果数据库不是空表，需要设置成 true，否则启动报错
+    baseline-on-migrate: true
+    # 验证错误时 是否自动清除数据库 高危操作!
+    clean-on-validation-error: false
+  # mvc 配置
+  mvc:
+    view:
+      prefix: classpath:/templates/
+      suffix: .html
+    static-path-pattern: /static/**
+
+  # resources 配置
+  resources:
+    static-locations: classpath:/static/
+
+# mybatis 配置
+#mybatis:
+#  mapper-locations: classpath:mapper/*Mapper.xml
+#
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: flag  # 全局逻辑删除的实体字段名(since 3.3.0,配置后可以忽略不配置步骤2)
+      logic-delete-value: 1 # 逻辑已删除值(默认为 1)
+      logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
+#GSS （小件）
+GSS:
+ rates-url: 'https://api.gosweetspot.com/api/rates'
+ shipments-url: 'https://api.gosweetspot.com/api/shipments'
+ access_key: 'itreg-15565-F3FE5F4C4261CC5D52F96F5BC937711E19D679'
+ site_id: 6192789 #测试点
+#site_id: 5186227 #正式点
+CPPH:
+#  token-url: 'https://auth.ep-prod.freightways.co.nz/oauth2/token'
+#  clientId: '14rvuforb7sn22m7h2m5a8rese:eqiqiap3cgjoae79eqen946o8efp588vr23bmt2q7e2och06rt5'
+#  base_url: 'https://customer-integration.ep-prod.freightways.co.nz/v1/carriers'
+  token-url: 'https://auth.ep-sandbox.freightways.co.nz/oauth2/token'
+  clientId: '7uih8c81poifstflq1r149oohh:1q4pvr3dtg7avhdprv9padfk6af2u7mi3djktv5creau9gbdjfai'#测试站点
+  base_url: 'https://customer-integration.ep-sandbox.freightways.co.nz/v1/carriers'
+  #order_url: 'https://customer-integration.ep-sandbox.freightways.co.nz/v1/carriers/{carrierName}/customers/{customerId}/consignments'
+  #rates_url: 'https://customer-integration.ep-sandbox.freightways.co.nz/v1/carriers/{carrierName}/customers/{customerId}/rates'
+#fliway
+fliway:
+ fliway-url: 'https://api.fliway.com/customerauth/connect/token'
+ fliway_username: 'it.reg@tradedepot.com'
+ fliway_password: 'test#fliway'
+ fliwayquote-url: 'https://api.fliway.com/customer/priceenquiry'
+ fliway_order_url: 'https://testapi.fliway.com/flo/consignmentinfo'
+ fliway_order_Basic: 'TradeDepot:wZUC6b58qRNb83BM'
+ fliway_tracking_url: 'https://testapi.fliway.com/flo/MILESTONES?Consignment='
+#mainfreight
+mainfreight:
+ mainfreight_tracking_url: 'https://api.mainfreight.com/Tracking/1.1/References/Events?servicetype=TransportNZ&reference='
+ mainfreight_tracking_Basic: 'Secret XSTNckF_zWj0c_g9Erjn8TGwyRk0_iMhvq8JJnvGgtvS0TTn-yr-Gsc1n60EIJVxdyCsUzQdjIRCAlDzoiTUrNmzx4R2L4AbTnkep3Xy7dMsEswTnYeZ6mqIkc63-8JR576uHCj_ocaQY76V7OPl_qfjRbd6r8PVsSMvtjx9GK3SLdY3hZ0ivFQLyBG7Mesm44IuXbR6YNfeN5Q00Qlbwg2'
+ mainfreight_order_url: 'https://api.mainfreight.com/transport/1.0/customer/rate?region=NZ'
+ mainfreight_order_Basic: 'Secret x-vJNTIbpV6HYQTw7zy4QkTqOKlBQM87UExUFlP4RGyiJKmIT0CAOiL-ZR4dh8vXdeRLuQVe1jngsmoyceUzVNvXnHjPebMM3U3kJ3vFjKBLLL1wpGLuLzQ4HtcFmArlFBiZVbPCS1t7hsfCZCHcM7lX4rgqSh7u0vV7p_5d4KqwCSrsWM_tCAO7kBlhmQpVEJ_BmcK47JlNIOGnSFsknQ2'
+#tdt询价
+tdt:
+  tdt_token_url: 'https://admin.tdtrucktest.com/api/v1/token/generate?key={key}&secret={secret}'
+  tdt_token_key: 'td-app'
+  tdt_token_secret: 'e07cc272e8d24b75865f8d43ee967b18'
+  tdt_rates_url: 'https://admin.tdtrucktest.com/api/v1/area/commission?postCode={postCode}&value={value}'
+  tdt_order_url: 'https://admin.tdtrucktest.com/api/v1/consignments'
+#AWS
+AWS:
+ #bucketName: td-freight
+ bucketName: td-freight-text
+ Access: AKIA3GDQZC3GEAQSVJO4
+ Secret: 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
+ #regionName: ap-southeast-2
+ regionName: us-west-2
+#sftp
+sftp:
+ MF_SFTP_URL: xftp.mainfreight.com
+ MF_SFTP_USERNAME: test.tradedepot
+ MF_SFTP_PASSWORD: DafB1721+
+##jwt配置
+audience:
+  # 代表这个JWT的接收对象,存入audience
+  clientId: 098f6bcd4621d373cade4e832627b4f6
+  # 密钥, 经过Base64加密, 可自行替换
+  base64Secret: MDk4ZjZiY2Q0NjIxZDM3M2NhZGU0ZTgzMjYyN2I0ZjY=
+  # JWT的签发主体，存入issuer
+  name: restapiuser
+  # 过期时间，时间戳
+  expiresSecond: 172800000
+#pdf下载路径
+fileUrl: http://106.14.246.118/upload/

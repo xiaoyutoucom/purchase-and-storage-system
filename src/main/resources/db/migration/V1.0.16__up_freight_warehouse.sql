@@ -1,0 +1,9 @@
+UPDATE public.freight_warehouse
+SET phonenumber='+6496361111'
+WHERE warehouse='hamilton';
+UPDATE public.freight_warehouse
+SET phonenumber='+6496361111'
+WHERE warehouse='otahuhu';
+UPDATE public.freight_warehouse
+SET phonenumber='+6496361111'
+WHERE warehouse='auckland';

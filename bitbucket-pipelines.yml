@@ -1,0 +1,90 @@
+#  Template Java Spring Boot App for Elastic Beanstalk
+
+#  This template allows you to deploy your application as code using AWS Elastic Beanstalk.
+#  The workflow allows validate, linting and security scans on feature branches (as well as master).
+#  The Spring Boot App will be validated and deployed after the code is merged to master.
+
+# Prerequisites: $AWS_ACCESS_KEY_ID, $AWS_SECRET_ACCESS_KEY, $AWS_DEFAULT_REGION setup in the Deployment variables.
+# For advanced cases, please, follow examples from the pipe's README https://bitbucket.org/atlassian/aws-elasticbeanstalk-deploy/src/master/README.md
+
+
+image: atlassian/default-image:2
+
+
+pipelines:
+  default:
+    - parallel:
+      - step:
+          name: Build and Test
+          script:
+            - chmod +x mvnw
+            - ./mvnw verify --file pom.xml
+          caches:
+            - maven
+          after-script:
+            - pipe: atlassian/checkstyle-report:0.2.0
+              variables:
+                DEBUG: "true"
+      - step:
+          name: Security Scan
+          script:
+            # Run a security scan for sensitive data.
+            # See more security tools at https://bitbucket.org/product/features/pipelines/integrations?&category=security
+            - pipe: atlassian/git-secrets-scan:0.4.3
+
+  branches:
+    develop:
+      - step:
+          name: "Build Staging"
+          script:
+            - chmod +x mvnw
+            - ./mvnw package -DskipTests
+            - zip -j application.zip target/*
+          artifacts:
+            - application.zip
+      - step:
+          name: "Deploy to Staging"
+          deployment: staging
+          script:
+            - echo "Deployment to Staging starts"
+            - pipe: atlassian/aws-elasticbeanstalk-deploy:1.0.2
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+                APPLICATION_NAME: $APPLICATION_NAME
+                COMMAND: 'all'
+                ZIP_FILE: 'application.zip'
+                S3_BUCKET: $S3_BUCKET
+                ENVIRONMENT_NAME: $ENVIRONMENT_NAME
+                WAIT_INTERVAL: 60
+                WARMUP_INTERVAL: 30
+                WAIT: 'true'
+    master:
+      - step:
+          name: "Build Production"
+          script:
+            - chmod +x mvnw
+            - ./mvnw package -DskipTests
+            - zip -j application.zip target/*
+          artifacts:
+            - application.zip
+      - step:
+          name: "Deploy to Production"
+          deployment: production
+          trigger: manual
+          script:
+            - echo "Deployment to Production starts"
+            - pipe: atlassian/aws-elasticbeanstalk-deploy:1.0.2
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+                APPLICATION_NAME: $APPLICATION_NAME
+                COMMAND: 'all'
+                ZIP_FILE: 'application.zip'
+                S3_BUCKET: $S3_BUCKET
+                ENVIRONMENT_NAME: $ENVIRONMENT_NAME
+                WAIT_INTERVAL: 60
+                WARMUP_INTERVAL: 30
+                WAIT: 'true'
